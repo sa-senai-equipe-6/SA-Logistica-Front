@@ -1,9 +1,15 @@
 package br.senai.logistica.frontend.service;
 
-import org.json.JSONArray;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.senai.logistica.frontend.entity.Motorista;
 import br.senai.logistica.frontend.route.Entity;
 import br.senai.logistica.frontend.route.Rota;
 
@@ -11,10 +17,16 @@ import br.senai.logistica.frontend.route.Rota;
 public class MotoristaService {
 	
 	@Autowired
+	private ObjectMapper mapper;
+	
+	@Autowired
 	private Rota rota;
 	
-	public JSONArray listarTodosMotoristas() {
-		return new JSONArray(rota.listar(Entity.MOTORISTA));
+	public List<Motorista> listarTodosMotoristas() throws JsonMappingException, JsonProcessingException {
+		var motoristasArray = rota.listar(Entity.MOTORISTA);
+		Motorista[] readValue = null;
+		readValue = mapper.readValue(motoristasArray, Motorista[].class);
+		return List.of(readValue);
 	}
 	
 }

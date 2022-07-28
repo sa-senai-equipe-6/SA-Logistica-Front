@@ -1,8 +1,5 @@
 package br.senai.logistica.frontend.ui;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,8 +9,17 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import br.senai.logistica.frontend.service.MotoristaService;
+
+@Component
 public class TelaPrincipalMotorista extends JFrame {
 
+	@Autowired
+	private MotoristaService service;
+	
 	private JPanel contentPane;
 	private JTextField txtUsuarioLogado;
 	private JTextField txtUsuario;
@@ -68,6 +74,10 @@ public class TelaPrincipalMotorista extends JFrame {
 					.addContainerGap())
 		);
 		contentPane.setLayout(gl_contentPane);
+	}
+
+	public void paraMotorista(Integer id) {
+		
 	}
 
 }

@@ -1,19 +1,25 @@
 package br.senai.logistica.frontend.ui;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import br.senai.logistica.frontend.service.UsuarioService;
+
+@Component
 public class TelaPrincipalGestor extends JFrame {
 
+	@Autowired
+	private UsuarioService service;
+	
 	private JPanel contentPane;
 	private JTextField txtUsuarioLogado;
 	private JTextField txtUsuario;
@@ -72,6 +78,10 @@ public class TelaPrincipalGestor extends JFrame {
 					.addContainerGap())
 		);
 		contentPane.setLayout(gl_contentPane);
+	}
+
+	public void paraGestor(Integer id) {
+		
 	}
 
 }
