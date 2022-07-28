@@ -9,7 +9,7 @@ public class InitApp {
 	public static void main(String[] args) {
 		SpringApplicationBuilder sb = new SpringApplicationBuilder(InitApp.class);
 		sb.headless(false);
-		sb.build(args);
+		sb.run(args);
 	}
 
 }
