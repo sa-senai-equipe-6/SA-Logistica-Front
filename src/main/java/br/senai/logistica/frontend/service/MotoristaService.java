@@ -28,5 +28,9 @@ public class MotoristaService {
 		readValue = mapper.readValue(motoristasArray, Motorista[].class);
 		return List.of(readValue);
 	}
+
+	public void excluir(Motorista motoristaSelecionado) {
+		
+	}
 	
 }

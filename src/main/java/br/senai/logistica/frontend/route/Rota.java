@@ -40,7 +40,7 @@ public class Rota {
 		
 		switch (entity) {
 			case MOTORISTA: url += "motorista"; break;
-			case MEIO_TRANSPORTE: url += "meiotransporte"; break;
+			case MEIO_TRANSPORTE: url += "transporte"; break;
 			case USUARIO: url += "usuario"; break;
 		}
 		return url;
@@ -60,10 +60,9 @@ public class Rota {
 
 	@SuppressWarnings("unchecked")
 	private void tratarException(Exception e) throws JsonMappingException, JsonProcessingException {
-		System.out.println(e.getMessage());
 		Map<String, Object> map = new JSONObject(tratarMensagem(e.getMessage())).toMap();
-		var teste = (List<HashMap>) map.get("erros");
-		for (HashMap map2 : teste) {
+		var teste = (List<HashMap<String, Object>>) map.get("erros");
+		for (HashMap<String, Object> map2 : teste) {
 			String msg = (String) map2.get("mensagem");
 			System.out.println(msg);
 			throw new RuntimeException(msg);
