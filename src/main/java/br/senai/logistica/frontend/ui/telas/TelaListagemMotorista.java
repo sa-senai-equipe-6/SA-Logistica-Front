@@ -30,24 +30,25 @@ public class TelaListagemMotorista extends JFrame {
 
 	@Autowired
 	private MotoristaService service;
-	
+
 	@Autowired
 	private TelaModificacaoMotorista telaModMotorista;
-	
+
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField textField;
 
 	public TelaListagemMotorista() {
-		
 		JTable table = new JTable();
+		setResizable(false);
+		setLocationRelativeTo(null);
 		setTitle("Motorista (LISTAGEM) - SA System 1.6");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 350);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		
+
 		JButton btnAdicionar = new JButton("Adicionar");
 		btnAdicionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -55,28 +56,28 @@ public class TelaListagemMotorista extends JFrame {
 				telaModMotorista.cadastrar();
 			}
 		});
-		
+
 		textField = new JTextField();
 		textField.setColumns(10);
-		
+
 		JLabel lblFiltro = new JLabel("Filtro");
-		
+
 		JButton btnListar = new JButton("Listar");
 		btnListar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				TelaListagemMotorista.this.atualizarTabela(table);
 			}
 		});
-		
+
 		JScrollPane scrollPane = new JScrollPane();
-		
+
 		JButton btnRemover = new JButton("Remover");
 		btnRemover.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				removerRegistroDa(table);
 			}
 		});
-		
+
 		JButton btnEditar = new JButton("Editar");
 		btnEditar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -84,60 +85,48 @@ public class TelaListagemMotorista extends JFrame {
 			}
 		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnAdicionar, Alignment.TRAILING)
-						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-							.addComponent(lblFiltro)
-							.addGap(372))
+		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup().addContainerGap().addGroup(gl_contentPane
+						.createParallelGroup(Alignment.LEADING).addComponent(btnAdicionar, Alignment.TRAILING)
+						.addGroup(Alignment.TRAILING,
+								gl_contentPane.createSequentialGroup().addComponent(lblFiltro).addGap(372))
 						.addComponent(textField, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-						.addComponent(btnListar, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnListar, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 87,
+								GroupLayout.PREFERRED_SIZE)
 						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
 						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-							.addComponent(btnEditar, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnRemover, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(btnAdicionar)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblFiltro)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnListar)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 135, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnRemover)
-						.addComponent(btnEditar))
-					.addContainerGap(14, Short.MAX_VALUE))
-		);
+								.addComponent(btnEditar, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(btnRemover, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)))
+						.addContainerGap()));
+		gl_contentPane
+				.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup().addContainerGap().addComponent(btnAdicionar)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblFiltro)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnListar)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 135, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+										.addComponent(btnRemover).addComponent(btnEditar))
+								.addContainerGap(14, Short.MAX_VALUE)));
 		scrollPane.setViewportView(table);
 		contentPane.setLayout(gl_contentPane);
 	}
-	
-	protected void removerRegistroDa(JTable table) {
+
+	private void removerRegistroDa(JTable tabela) {
 		try {
-			var motoristaSelecionado = getMotoristaSelecionadoNa(table);
-			int opcaoSelecionada = JOptionPane.showConfirmDialog(
-					contentPane, 
-					"Deseja remover?",
-					"Remoção", 
+			var motoristaSelecionado = getMotoristaSelecionadoNa(tabela);
+			int opcaoSelecionada = JOptionPane.showConfirmDialog(contentPane, "Deseja remover?", "Remoção",
 					JOptionPane.YES_NO_OPTION);
-			
+
 			if (opcaoSelecionada == JOptionPane.YES_OPTION) {
 				this.service.excluir(motoristaSelecionado);
-				((MotoristaTableModel)table.getModel()).removerPor(opcaoSelecionada);
-				table.updateUI();
+				((MotoristaTableModel) tabela.getModel()).removerPor(opcaoSelecionada);
+				tabela.updateUI();
 				JOptionPane.showMessageDialog(contentPane, "Motorista removido com sucesso");
 			}
 		} catch (Exception e) {
@@ -145,30 +134,30 @@ public class TelaListagemMotorista extends JFrame {
 		}
 	}
 
-	protected void editarRegistroDa(JTable table) {
-		
+	private void editarRegistroDa(JTable tabela) {
+
 	}
 
-	private void atualizarTabela(JTable table) {
+	private void atualizarTabela(JTable tabela) {
 		try {
 			var motoristas = service.listarTodosMotoristas();
 			var motoristasTableModel = new MotoristaTableModel(motoristas);
-			table.setModel(motoristasTableModel);
-			var cm = table.getColumnModel();
+			tabela.setModel(motoristasTableModel);
+			var cm = tabela.getColumnModel();
 			cm.getColumn(0).setPreferredWidth(20);
 			cm.getColumn(1).setPreferredWidth(240);
-			table.updateUI();
+			tabela.updateUI();
 		} catch (JsonProcessingException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage());
 		}
-		
+
 	}
-	
+
 	private Motorista getMotoristaSelecionadoNa(JTable tabela) {
 		int linhaSelecionada = tabela.getSelectedRow();
 		if (linhaSelecionada < 0)
 			throw new IllegalArgumentException("Nenhuma linha selecionada");
-		
+
 		var model = (MotoristaTableModel) tabela.getModel();
 		var itemSelecionado = model.getPor(linhaSelecionada);
 		return itemSelecionado;

@@ -53,4 +53,8 @@ public class TransportesTableModel extends AbstractTableModel {
 		throw new IllegalArgumentException("Índice inválido");
 	}
 
+	public MeioTransporte getPor(int linhaSelecionada) {
+		return transportes.get(linhaSelecionada);
+	}
+
 }
