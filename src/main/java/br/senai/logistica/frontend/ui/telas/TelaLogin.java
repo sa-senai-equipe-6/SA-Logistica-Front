@@ -1,4 +1,4 @@
-package br.senai.logistica.frontend.ui;
+package br.senai.logistica.frontend.ui.telas;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.senai.logistica.frontend.entity.Perfil;
+import br.senai.logistica.frontend.entity.Usuario;
 import br.senai.logistica.frontend.service.UsuarioService;
 
 @Component
@@ -53,7 +54,7 @@ public class TelaLogin extends JFrame {
 				try {
 					if (validarCampos()) {
 						var usuarioLogado = usuarioService.loginCom(txtLogin.getText(), fldSenha.getText());
-						System.out.println(usuarioLogado);
+						trocarTelaPara(usuarioLogado);
 					}
 				} catch (Exception e2) {
 					JOptionPane.showMessageDialog(TelaLogin.this, e2.getMessage());
@@ -103,6 +104,7 @@ public class TelaLogin extends JFrame {
 		);
 		contentPane.setLayout(gl_contentPane);
 		setResizable(false);
+		setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
 
@@ -127,17 +129,17 @@ public class TelaLogin extends JFrame {
 		fldSenha.setBorder(null);
 	}
 
-	private void trocarTelaPara(Perfil perfil, Integer id) {
+	private void trocarTelaPara(Usuario usuario) {
 		this.setVisible(false);
 		
-		switch (perfil) {
+		switch (usuario.getPerfil()) {
 		case MOTORISTA:
-			telaMotorista.paraMotorista(id);
+			telaMotorista.paraMotorista(usuario.getId());
 			telaMotorista.setVisible(true);
 			break;
 			
 		case GESTOR:
-			telaGestor.paraGestor(id);
+			telaGestor.paraGestor(usuario);
 			telaGestor.setVisible(true);
 			break;
 		}

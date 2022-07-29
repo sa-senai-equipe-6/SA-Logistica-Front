@@ -1,4 +1,4 @@
-package br.senai.logistica.frontend.ui;
+package br.senai.logistica.frontend.ui.telas;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;

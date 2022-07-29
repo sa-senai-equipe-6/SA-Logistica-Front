@@ -1,4 +1,4 @@
-package br.senai.logistica.frontend.ui;
+package br.senai.logistica.frontend.ui.telas;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -15,6 +15,10 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class TelaListagemMeioDeTransporte extends JFrame {
 
 	private JPanel contentPane;
@@ -22,6 +26,8 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 	private JTable table;
 
 	public TelaListagemMeioDeTransporte() {
+		setResizable(false);
+		setLocationRelativeTo(null);
 		setTitle("Meio de Transporte (LISTAGEM) - SA System 1.6");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 350);
