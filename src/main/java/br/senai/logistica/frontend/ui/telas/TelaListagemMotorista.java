@@ -41,7 +41,6 @@ public class TelaListagemMotorista extends JFrame {
 	public TelaListagemMotorista() {
 		JTable table = new JTable();
 		setResizable(false);
-		setLocationRelativeTo(null);
 		setTitle("Motorista (LISTAGEM) - SA System 1.6");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 350);
@@ -115,6 +114,7 @@ public class TelaListagemMotorista extends JFrame {
 								.addContainerGap(14, Short.MAX_VALUE)));
 		scrollPane.setViewportView(table);
 		contentPane.setLayout(gl_contentPane);
+		setLocationRelativeTo(null);
 	}
 
 	private void removerRegistroDa(JTable tabela) {
@@ -129,13 +129,18 @@ public class TelaListagemMotorista extends JFrame {
 				tabela.updateUI();
 				JOptionPane.showMessageDialog(contentPane, "Motorista removido com sucesso");
 			}
+		} catch (RuntimeException re) {
+			if (re.getMessage().contains("integridade")) {
+				JOptionPane.showMessageDialog(contentPane, "Não é possivel deletar motoristas contendo\nmeio de transporte vinculado");
+			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(contentPane, e.getMessage());
 		}
 	}
 
 	private void editarRegistroDa(JTable tabela) {
-
+		
 	}
 
 	private void atualizarTabela(JTable tabela) {

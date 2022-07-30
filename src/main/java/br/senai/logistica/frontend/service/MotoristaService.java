@@ -3,6 +3,7 @@ package br.senai.logistica.frontend.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,8 +30,16 @@ public class MotoristaService {
 		return List.of(readValue);
 	}
 
-	public void excluir(Motorista motoristaSelecionado) {
-		
+	public void excluir(Motorista motoristaSelecionado) throws JsonMappingException, JsonProcessingException {
+		rota.montarRequisicao(motoristaSelecionado, HttpMethod.DELETE);
+	}
+
+	public void cadastrar(Motorista novoMotorista) throws JsonMappingException, JsonProcessingException {
+		rota.montarRequisicao(novoMotorista, HttpMethod.POST);
+	}
+	
+	public void editar(Motorista novoMotorista) throws JsonMappingException, JsonProcessingException {
+		rota.montarRequisicao(novoMotorista, HttpMethod.PUT);
 	}
 	
 }

@@ -7,7 +7,9 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.senai.logistica.frontend.entity.Motorista;
 import br.senai.logistica.frontend.entity.Usuario;
 
 @Component
@@ -30,12 +33,12 @@ public class Rota {
 	private ObjectMapper mapper;
 	
     public String listar(Entity entity) {
-    	var url = montarUrlParaLista(entity);
+    	var url = montarUrlPara(entity);
     	ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, String.class);
     	return response.getBody();
     }
 
-	private String montarUrlParaLista(Entity entity) {
+	private String montarUrlPara(Entity entity) {
 		String url = URL_BASE;
 		
 		switch (entity) {
@@ -58,8 +61,26 @@ public class Rota {
 		return null;
 	}
 
+	public void montarRequisicao(Motorista novoMotorista, HttpMethod method) throws JsonMappingException, JsonProcessingException {
+		var url = montarUrlPara(Entity.MOTORISTA);
+		var entity = montarEntityPara(novoMotorista);
+		try {			
+			restTemplate.exchange(url, method, entity, String.class);
+		} catch (Exception e) {
+			tratarException(e);
+		}
+	}
+	
+	private HttpEntity<String> montarEntityPara(Motorista novoMotorista) throws JsonProcessingException {
+		var headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		return new HttpEntity<String>(mapper.writeValueAsString(novoMotorista), headers);
+	}
+
 	@SuppressWarnings("unchecked")
+	//TODO: rever tratamento de exceções
 	private void tratarException(Exception e) throws JsonMappingException, JsonProcessingException {
+		e.printStackTrace();
 		Map<String, Object> map = new JSONObject(tratarMensagem(e.getMessage())).toMap();
 		var teste = (List<HashMap<String, Object>>) map.get("erros");
 		for (HashMap<String, Object> map2 : teste) {
@@ -72,5 +93,5 @@ public class Rota {
 	private String tratarMensagem(String msg) {
 		return msg.replaceAll("^(.{6})\"|\"$", "");
 	}
-	
+
 }

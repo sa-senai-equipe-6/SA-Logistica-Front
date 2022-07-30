@@ -2,7 +2,11 @@ package br.senai.logistica.frontend.ui.telas;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -16,7 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.DateFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -38,6 +41,7 @@ public class TelaModificacaoMotorista extends JFrame {
 	private TelaListagemMotorista telaMotoristas;
 	
 	private static final long serialVersionUID = 1L;
+	private DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	private JPanel contentPane;
 	private JTextField txtLogin;
 	private JTextField txtSenha;
@@ -53,7 +57,6 @@ public class TelaModificacaoMotorista extends JFrame {
 
 	public TelaModificacaoMotorista() {
 		setResizable(false);
-		setLocationRelativeTo(null);
 		setTitle("Motorista (INSERÇÃO/EDIÇÃO) - SA System 1.6");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 399, 288);
@@ -75,8 +78,8 @@ public class TelaModificacaoMotorista extends JFrame {
 		
 		JLabel lblNome = new JLabel("Nome Completo");
 		
-		txtRenovacao = new JFormattedTextField();
-		//TODO: criar formatação para data no campo acima
+		DateFormat formatoDataTxt = new SimpleDateFormat("dd/MM/yyyy");
+		txtRenovacao = new JFormattedTextField(formatoDataTxt);
 		
 		lblRenovacao = new JLabel("Renovação");
 		
@@ -185,6 +188,7 @@ public class TelaModificacaoMotorista extends JFrame {
 					.addGap(119))
 		);
 		contentPane.setLayout(gl_contentPane);
+		setLocationRelativeTo(null);
 	}
 
 	protected void cadastrarMotorista() {
@@ -197,7 +201,11 @@ public class TelaModificacaoMotorista extends JFrame {
 							txtLogin.getText(),
 							txtSenha.getText(),
 							Perfil.MOTORISTA));
-			novoMotorista.setDataRenovacao(LocalDate.parse(txtRenovacao.getText()));
+			novoMotorista.setDataRenovacao(LocalDate.parse(txtRenovacao.getText(), formatoData));
+			service.cadastrar(novoMotorista);
+			JOptionPane.showMessageDialog(contentPane, "Motorista cadastrado com sucesso!");
+		} catch (DateTimeParseException dtpe) {
+			JOptionPane.showMessageDialog(contentPane, "Data inválida, tente novamente\nFormato da data: XX/XX/XXXX");
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(contentPane, e.getMessage());
 		}
@@ -208,6 +216,14 @@ public class TelaModificacaoMotorista extends JFrame {
 		this.setVisible(true);
 	}
 
+	public void botarEmEdicao(Motorista motorista) {
+		txtCnh.setText(motorista.getCnh());
+		txtLogin.setText(motorista.getUsuario().getLogin());
+		txtNomeCompleto.setText(motorista.getUsuario().getNomeCompleto());
+		txtSenha.setText(motorista.getUsuario().getSenha());
+		this.setVisible(true);
+	}
+	
 	private void limparCampos() {
 		txtCnh.setText("");
 		txtLogin.setText("");

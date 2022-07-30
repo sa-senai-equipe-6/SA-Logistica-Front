@@ -39,7 +39,6 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 	public TelaListagemMeioDeTransporte() {
 		JTable tabela = new JTable();
 		setResizable(false);
-		setLocationRelativeTo(null);
 		setTitle("Meio de Transporte (LISTAGEM) - SA System 1.6");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 350);
@@ -124,6 +123,7 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(contentPane, e.getMessage());
 		}
+		setLocationRelativeTo(null);
 	}
 	
 	private void editarRegistroNa(JTable tabela) {

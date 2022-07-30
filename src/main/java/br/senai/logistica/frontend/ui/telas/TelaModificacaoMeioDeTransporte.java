@@ -1,24 +1,41 @@
 package br.senai.logistica.frontend.ui.telas;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JLabel;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JFormattedTextField;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import br.senai.logistica.frontend.entity.Motorista;
+import br.senai.logistica.frontend.service.MotoristaService;
+
+@Component
 public class TelaModificacaoMeioDeTransporte extends JFrame {
 
+	private static final long serialVersionUID = 1L;
+
+	@Autowired
+	@Lazy
+	private TelaListagemMeioDeTransporte telaTransporte;
+	
+	@Autowired
+	private MotoristaService motoristaService;
+	
+	private JComboBox<Motorista> boxMotorista;
+	private JComboBox<String> boxTipo;
 	private JPanel contentPane;
 
 	public TelaModificacaoMeioDeTransporte() {
@@ -35,13 +52,15 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 		
 		JFormattedTextField txtRevisao = new JFormattedTextField();
 		
-		JComboBox boxTipo = new JComboBox();
+		boxTipo = new JComboBox<String>();
+		boxTipo.addItem("CARRO");
+		boxTipo.addItem("MOTO");
 		
 		JLabel lblTipo = new JLabel("Tipo");
 		
 		JLabel lblMotorista = new JLabel("Motorista");
 		
-		JComboBox boxTipo_1 = new JComboBox();
+		boxMotorista = new JComboBox<Motorista>();
 		
 		JLabel lblDescricao = new JLabel("Descrição");
 		
@@ -64,7 +83,7 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 								.addComponent(lblTipo, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
 								.addComponent(boxTipo, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)))
 						.addComponent(lblMotorista, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-						.addComponent(boxTipo_1, 0, 430, Short.MAX_VALUE)
+						.addComponent(boxMotorista, 0, 430, Short.MAX_VALUE)
 						.addComponent(lblDescricao)
 						.addComponent(textArea, GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
 						.addComponent(btnSalvar, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE))
@@ -86,7 +105,7 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(lblMotorista)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(boxTipo_1, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+					.addComponent(boxMotorista, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
 					.addComponent(lblDescricao)
 					.addPreferredGap(ComponentPlacement.RELATED)
@@ -96,5 +115,16 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
+	}
+	
+	@Override
+	public void setVisible(boolean b) {
+		super.setVisible(b);
+		try {
+			var motoristas = motoristaService.listarTodosMotoristas();
+			motoristas.forEach(m -> boxMotorista.addItem(m));
+		} catch (JsonProcessingException e) {
+			JOptionPane.showMessageDialog(contentPane, e.getMessage());
+		}
 	}
 }
