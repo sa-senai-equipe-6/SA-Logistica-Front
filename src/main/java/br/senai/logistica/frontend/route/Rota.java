@@ -37,6 +37,12 @@ public class Rota {
     	ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, String.class);
     	return response.getBody();
     }
+    
+    public String listar(Entity entity, String filtro) {
+		var url = montarUrlPara(entity) + "/filtro/" + filtro;
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, String.class);
+    	return response.getBody();
+	}
 
 	private String montarUrlPara(Entity entity) {
 		String url = URL_BASE;
@@ -62,15 +68,16 @@ public class Rota {
 	}
 
 	public void montarRequisicao(Motorista novoMotorista, HttpMethod method) throws JsonMappingException, JsonProcessingException {
-		var url = montarUrlPara(Entity.MOTORISTA);
-		var entity = montarEntityPara(novoMotorista);
+		var id = novoMotorista.getId();
+		var url = montarUrlPara(Entity.MOTORISTA) + "/id/" + id;
 		try {			
-			restTemplate.exchange(url, method, entity, String.class);
+			restTemplate.exchange(url, method, HttpEntity.EMPTY, String.class);
 		} catch (Exception e) {
 			tratarException(e);
 		}
 	}
 	
+	//TODO: remover método abaixo
 	private HttpEntity<String> montarEntityPara(Motorista novoMotorista) throws JsonProcessingException {
 		var headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -78,7 +85,6 @@ public class Rota {
 	}
 
 	@SuppressWarnings("unchecked")
-	//TODO: rever tratamento de exceções
 	private void tratarException(Exception e) throws JsonMappingException, JsonProcessingException {
 		e.printStackTrace();
 		Map<String, Object> map = new JSONObject(tratarMensagem(e.getMessage())).toMap();
