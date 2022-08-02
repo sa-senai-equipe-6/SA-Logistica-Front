@@ -1,5 +1,6 @@
 package br.senai.logistica.frontend.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.senai.logistica.frontend.entity.Motorista;
@@ -27,7 +29,7 @@ public class MotoristaService {
 		var motoristasArray = rota.listar(Entity.MOTORISTA);
 		Motorista[] readValue = null;
 		readValue = mapper.readValue(motoristasArray, Motorista[].class);
-		return List.of(readValue);
+		return Arrays.asList(readValue);
 	}
 
 	public void excluir(Motorista motoristaSelecionado) throws JsonMappingException, JsonProcessingException {
@@ -40,6 +42,16 @@ public class MotoristaService {
 	
 	public void editar(Motorista novoMotorista) throws JsonMappingException, JsonProcessingException {
 		rota.montarRequisicao(novoMotorista, HttpMethod.PUT);
+	}
+
+	public List<Motorista> listarPorFiltro(String filtro) throws JsonMappingException, JsonProcessingException {
+		var arrayMotoristas = rota.listar(Entity.MOTORISTA, filtro);
+		var jsonMotoristas = mapper.readValue(arrayMotoristas, JsonNode.class);
+		System.out.println("array ----> " + jsonMotoristas);
+		if (jsonMotoristas.isArray()) {
+			return Arrays.asList(mapper.treeToValue(jsonMotoristas, Motorista[].class));
+		}
+		return Arrays.asList(mapper.treeToValue(jsonMotoristas, Motorista.class));
 	}
 	
 }
