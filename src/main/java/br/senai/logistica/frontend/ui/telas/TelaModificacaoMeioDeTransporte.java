@@ -34,9 +34,11 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 	@Autowired
 	private MotoristaService motoristaService;
 	
+	private JPanel contentPane;
 	private JComboBox<Motorista> boxMotorista;
 	private JComboBox<String> boxTipo;
-	private JPanel contentPane;
+	private JTextArea txtDescricao;
+	private JFormattedTextField txtRevisao;
 
 	public TelaModificacaoMeioDeTransporte() {
 		setTitle("Meio de Transporte (INSERÇÃO/EDIÇÃO) - SA System 1.6");
@@ -50,7 +52,7 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 		
 		JLabel lblRevisao = new JLabel("Revisão");
 		
-		JFormattedTextField txtRevisao = new JFormattedTextField();
+		txtRevisao = new JFormattedTextField();
 		
 		boxTipo = new JComboBox<String>();
 		boxTipo.addItem("CARRO");
@@ -64,7 +66,7 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 		
 		JLabel lblDescricao = new JLabel("Descrição");
 		
-		JTextArea textArea = new JTextArea();
+		txtDescricao = new JTextArea();
 		
 		JButton btnSalvar = new JButton("Salvar");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -85,7 +87,7 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 						.addComponent(lblMotorista, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
 						.addComponent(boxMotorista, 0, 430, Short.MAX_VALUE)
 						.addComponent(lblDescricao)
-						.addComponent(textArea, GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+						.addComponent(txtDescricao, GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
 						.addComponent(btnSalvar, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
@@ -109,7 +111,7 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 					.addGap(18)
 					.addComponent(lblDescricao)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(textArea, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
+					.addComponent(txtDescricao, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnSalvar)
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -126,5 +128,18 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 		} catch (JsonProcessingException e) {
 			JOptionPane.showMessageDialog(contentPane, e.getMessage());
 		}
+	}
+
+	public void cadastrar() {
+		this.limparCampos();
+		this.setVisible(true);
+	}
+
+	public void botarEmEdicao(Motorista motorista) {
+		this.setVisible(true);
+	}
+	
+	private void limparCampos() {
+		//TODO: fazer limpar campos
 	}
 }

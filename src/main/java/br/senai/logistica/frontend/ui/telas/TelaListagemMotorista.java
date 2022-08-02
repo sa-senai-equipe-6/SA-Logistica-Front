@@ -36,7 +36,7 @@ public class TelaListagemMotorista extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
+	private JTextField txtFiltro;
 
 	public TelaListagemMotorista() {
 		JTable table = new JTable();
@@ -56,8 +56,8 @@ public class TelaListagemMotorista extends JFrame {
 			}
 		});
 
-		textField = new JTextField();
-		textField.setColumns(10);
+		txtFiltro = new JTextField();
+		txtFiltro.setColumns(10);
 
 		JLabel lblFiltro = new JLabel("Filtro");
 
@@ -89,7 +89,7 @@ public class TelaListagemMotorista extends JFrame {
 						.createParallelGroup(Alignment.LEADING).addComponent(btnAdicionar, Alignment.TRAILING)
 						.addGroup(Alignment.TRAILING,
 								gl_contentPane.createSequentialGroup().addComponent(lblFiltro).addGap(372))
-						.addComponent(textField, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+						.addComponent(txtFiltro, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
 						.addComponent(btnListar, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 87,
 								GroupLayout.PREFERRED_SIZE)
 						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
@@ -103,7 +103,7 @@ public class TelaListagemMotorista extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup().addContainerGap().addComponent(btnAdicionar)
 								.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblFiltro)
 								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+								.addComponent(txtFiltro, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 										GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnListar)
 								.addPreferredGap(ComponentPlacement.RELATED)
@@ -119,19 +119,16 @@ public class TelaListagemMotorista extends JFrame {
 
 	private void removerRegistroDa(JTable tabela) {
 		try {
-			var motoristaSelecionado = getMotoristaSelecionadoNa(tabela);
+			int linhaSelecionada = tabela.getSelectedRow();
+			var motoristaSelecionado = getMotoristaSelecionadoNa(tabela, linhaSelecionada);
 			int opcaoSelecionada = JOptionPane.showConfirmDialog(contentPane, "Deseja remover?", "Remoção",
 					JOptionPane.YES_NO_OPTION);
 
 			if (opcaoSelecionada == JOptionPane.YES_OPTION) {
 				this.service.excluir(motoristaSelecionado);
-				((MotoristaTableModel) tabela.getModel()).removerPor(opcaoSelecionada);
+				((MotoristaTableModel) tabela.getModel()).removerPor(linhaSelecionada);
 				tabela.updateUI();
 				JOptionPane.showMessageDialog(contentPane, "Motorista removido com sucesso");
-			}
-		} catch (RuntimeException re) {
-			if (re.getMessage().contains("integridade")) {
-				JOptionPane.showMessageDialog(contentPane, "Não é possivel deletar motoristas contendo\nmeio de transporte vinculado");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -140,26 +137,29 @@ public class TelaListagemMotorista extends JFrame {
 	}
 
 	private void editarRegistroDa(JTable tabela) {
-		
+		//TODO: fazer edicao de registro
 	}
 
 	private void atualizarTabela(JTable tabela) {
 		try {
-			var motoristas = service.listarTodosMotoristas();
+			String filtro = txtFiltro.getText();
+			if (filtro == null || filtro.isBlank()) {
+				throw new IllegalArgumentException("O filtro é obrigatório");
+			}
+			var motoristas = service.listarPorFiltro(filtro);
 			var motoristasTableModel = new MotoristaTableModel(motoristas);
 			tabela.setModel(motoristasTableModel);
 			var cm = tabela.getColumnModel();
 			cm.getColumn(0).setPreferredWidth(20);
 			cm.getColumn(1).setPreferredWidth(240);
 			tabela.updateUI();
-		} catch (JsonProcessingException e) {
+		} catch (JsonProcessingException | IllegalArgumentException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage());
 		}
 
 	}
 
-	private Motorista getMotoristaSelecionadoNa(JTable tabela) {
-		int linhaSelecionada = tabela.getSelectedRow();
+	private Motorista getMotoristaSelecionadoNa(JTable tabela, int linhaSelecionada) {
 		if (linhaSelecionada < 0)
 			throw new IllegalArgumentException("Nenhuma linha selecionada");
 

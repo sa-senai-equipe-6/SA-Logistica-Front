@@ -37,8 +37,8 @@ private static final long serialVersionUID = 4219244341278160651L;
 		}
 	}
 	
-	public void removerPor(int id) {
-		this.motoristas.remove(id);
+	public void removerPor(int rowIndex) {
+		this.motoristas.remove(rowIndex);
 	}
 	
 	@Override

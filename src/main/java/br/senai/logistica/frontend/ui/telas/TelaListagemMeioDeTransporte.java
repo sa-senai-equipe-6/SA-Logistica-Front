@@ -1,6 +1,7 @@
 package br.senai.logistica.frontend.ui.telas;
 
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -9,7 +10,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
@@ -20,8 +20,6 @@ import br.senai.logistica.frontend.entity.MeioTransporte;
 import br.senai.logistica.frontend.service.MeioTransporteService;
 import br.senai.logistica.frontend.ui.table.MotoristaTableModel;
 import br.senai.logistica.frontend.ui.table.TransportesTableModel;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 @Component
 public class TelaListagemMeioDeTransporte extends JFrame {
@@ -46,34 +44,24 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
-		JButton btnAdicionar = new JButton("Adicionar");
-		btnAdicionar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-
 		textField = new JTextField();
 		textField.setColumns(10);
 
 		JLabel lblFiltro = new JLabel("Filtro");
-
-		JButton btnListar = new JButton("Listar");
-		btnListar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				atualizar(tabela);
-			}
-		});
-
 		JScrollPane scrollPane = new JScrollPane();
 
+		JButton btnAdicionar = new JButton("Adicionar");
+		btnAdicionar.addActionListener(e -> adicionarTransporte());
+
+		JButton btnListar = new JButton("Listar");
+		btnListar.addActionListener(e -> atualizar(tabela));
+
 		JButton btnRemover = new JButton("Remover");
-		btnRemover.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-			}
-		});
+		btnRemover.addActionListener(e -> removerRegistroDa(tabela));
 
 		JButton btnEditar = new JButton("Editar");
+		btnEditar.addActionListener(e -> editarRegistroNa(tabela));
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup().addContainerGap().addGroup(gl_contentPane
@@ -106,36 +94,41 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 
 		scrollPane.setViewportView(tabela);
 		contentPane.setLayout(gl_contentPane);
+		setLocationRelativeTo(null);
+	}
+
+	private void adicionarTransporte() {
+		this.setVisible(false);
+		telaModTransporte.cadastrar();
 	}
 
 	private void removerRegistroDa(JTable tabela) {
 		try {
-			var transporteSelecionado = getTransporteSelecionadoNa(tabela);
+			int linhaSelecionada = tabela.getSelectedRow();
+			var transporteSelecionado = getTransporteSelecionadoNa(tabela, linhaSelecionada);
 			int opcaoSelecionada = JOptionPane.showConfirmDialog(contentPane, "Deseja remover?", "Remoção",
 					JOptionPane.YES_NO_OPTION);
 
 			if (opcaoSelecionada == JOptionPane.YES_OPTION) {
 				this.service.excluir(transporteSelecionado);
-				((MotoristaTableModel) tabela.getModel()).removerPor(opcaoSelecionada);
+				((MotoristaTableModel) tabela.getModel()).removerPor(linhaSelecionada);
 				tabela.updateUI();
 				JOptionPane.showMessageDialog(contentPane, "Motorista removido com sucesso");
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(contentPane, e.getMessage());
 		}
-		setLocationRelativeTo(null);
 	}
 	
 	private void editarRegistroNa(JTable tabela) {
-
+		//TODO: fazer edição
 	}
 
 	private void atualizar(JTable tabela) {
-		
+		//TODO: fazer atualização da tabela
 	}
 
-	private MeioTransporte getTransporteSelecionadoNa(JTable tabela) {
-		int linhaSelecionada = tabela.getSelectedRow();
+	private MeioTransporte getTransporteSelecionadoNa(JTable tabela, int linhaSelecionada) {
 		if (linhaSelecionada < 0)
 			throw new IllegalArgumentException("Nenhuma linha selecionada");
 
