@@ -23,6 +23,8 @@ import org.springframework.stereotype.Component;
 import br.senai.logistica.frontend.entity.Perfil;
 import br.senai.logistica.frontend.entity.Usuario;
 import br.senai.logistica.frontend.service.UsuarioService;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 @Component
 public class TelaLogin extends JFrame {
@@ -51,14 +53,7 @@ public class TelaLogin extends JFrame {
 		JButton btnLogin = new JButton("Logar");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					if (validarCampos()) {
-						var usuarioLogado = usuarioService.loginCom(txtLogin.getText(), fldSenha.getText());
-						trocarTelaPara(usuarioLogado);
-					}
-				} catch (Exception e2) {
-					JOptionPane.showMessageDialog(TelaLogin.this, e2.getMessage());
-				}
+				tentarLogin();
 			}
 		});
 		
@@ -66,10 +61,16 @@ public class TelaLogin extends JFrame {
 		
 		txtLogin = new JTextField();
 		txtLogin.setColumns(10);
+		txtLogin.addActionListener(e -> {
+			tentarLogin();
+		});
 		
 		JLabel lblSenha = new JLabel("Senha");
 		
 		fldSenha = new JPasswordField();
+		fldSenha.addActionListener(e -> {
+			tentarLogin();
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -124,6 +125,17 @@ public class TelaLogin extends JFrame {
 		return true;
 	}
 
+	private void tentarLogin() {
+		try {
+			if (validarCampos()) {
+				var usuarioLogado = usuarioService.loginCom(txtLogin.getText(), fldSenha.getText());
+				trocarTelaPara(usuarioLogado);
+			}
+		} catch (Exception e2) {
+			JOptionPane.showMessageDialog(TelaLogin.this, e2.getMessage());
+		}
+	}
+	
 	private void resetarCampos() {
 		txtLogin.setBorder(null);
 		fldSenha.setBorder(null);
