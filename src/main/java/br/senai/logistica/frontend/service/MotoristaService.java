@@ -47,11 +47,14 @@ public class MotoristaService {
 	public List<Motorista> listarPorFiltro(String filtro) throws JsonMappingException, JsonProcessingException {
 		var arrayMotoristas = rota.listar(Entity.MOTORISTA, filtro);
 		var jsonMotoristas = mapper.readValue(arrayMotoristas, JsonNode.class);
-		System.out.println("array ----> " + jsonMotoristas);
 		if (jsonMotoristas.isArray()) {
 			return Arrays.asList(mapper.treeToValue(jsonMotoristas, Motorista[].class));
 		}
 		return Arrays.asList(mapper.treeToValue(jsonMotoristas, Motorista.class));
+	}
+
+	public Motorista buscarPor(Integer id) throws JsonMappingException, JsonProcessingException {
+		return rota.buscarMotoristaPor(id);
 	}
 	
 }

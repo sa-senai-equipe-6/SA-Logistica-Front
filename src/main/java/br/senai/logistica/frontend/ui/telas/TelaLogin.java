@@ -20,14 +20,13 @@ import javax.swing.border.EmptyBorder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.senai.logistica.frontend.entity.Perfil;
 import br.senai.logistica.frontend.entity.Usuario;
 import br.senai.logistica.frontend.service.UsuarioService;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 @Component
 public class TelaLogin extends JFrame {
+
+	private static final long serialVersionUID = 1L;
 
 	@Autowired
 	private UsuarioService usuarioService;
@@ -112,7 +111,7 @@ public class TelaLogin extends JFrame {
 	protected boolean validarCampos() {
 		this.resetarCampos();
 		var login = txtLogin.getText();
-		var senha = fldSenha.getText();
+		var senha = new String(fldSenha.getPassword());
 		if (login == null || login.isBlank()) {
 			txtLogin.setBorder(BorderFactory.createLineBorder(Color.red));
 			JOptionPane.showMessageDialog(this, "O login é obrigatório");
@@ -128,7 +127,7 @@ public class TelaLogin extends JFrame {
 	private void tentarLogin() {
 		try {
 			if (validarCampos()) {
-				var usuarioLogado = usuarioService.loginCom(txtLogin.getText(), fldSenha.getText());
+				var usuarioLogado = usuarioService.loginCom(txtLogin.getText(), new String(fldSenha.getPassword()));
 				trocarTelaPara(usuarioLogado);
 			}
 		} catch (Exception e2) {
@@ -146,12 +145,12 @@ public class TelaLogin extends JFrame {
 		
 		switch (usuario.getPerfil()) {
 		case MOTORISTA:
-			telaMotorista.paraMotorista(usuario.getId());
+			telaMotorista.trocarPara(usuario.getId());
 			telaMotorista.setVisible(true);
 			break;
 			
 		case GESTOR:
-			telaGestor.paraGestor(usuario);
+			telaGestor.trocarPara(usuario);
 			telaGestor.setVisible(true);
 			break;
 		}

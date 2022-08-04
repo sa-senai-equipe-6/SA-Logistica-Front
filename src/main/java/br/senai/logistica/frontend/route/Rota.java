@@ -7,9 +7,7 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -76,13 +74,6 @@ public class Rota {
 			tratarException(e);
 		}
 	}
-	
-	//TODO: remover método abaixo
-	private HttpEntity<String> montarEntityPara(Motorista novoMotorista) throws JsonProcessingException {
-		var headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		return new HttpEntity<String>(mapper.writeValueAsString(novoMotorista), headers);
-	}
 
 	@SuppressWarnings("unchecked")
 	private void tratarException(Exception e) throws JsonMappingException, JsonProcessingException {
@@ -98,6 +89,17 @@ public class Rota {
 	
 	private String tratarMensagem(String msg) {
 		return msg.replaceAll("^(.{6})\"|\"$", "");
+	}
+	
+	public Motorista buscarMotoristaPor(Integer id) throws JsonMappingException, JsonProcessingException {
+		var url = montarUrlPara(Entity.MOTORISTA) + "/id/" + id;
+		try {
+			ResponseEntity<Motorista> resposta = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, Motorista.class);
+			return resposta.getBody();
+		} catch (Exception e) {
+			tratarException(e);
+		}
+		return null;
 	}
 
 }

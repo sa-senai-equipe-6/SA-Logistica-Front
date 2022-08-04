@@ -1,5 +1,9 @@
 package br.senai.logistica.frontend.ui.telas;
 
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -13,17 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.senai.logistica.frontend.entity.Usuario;
-import br.senai.logistica.frontend.service.UsuarioService;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.Font;
 
 @Component
 public class TelaPrincipalGestor extends JFrame {
 
-	@Autowired
-	private UsuarioService service;
-	
+	private static final long serialVersionUID = 1L;
+
 	@Autowired
 	private TelaListagemMotorista telaMotoristas;
 	
@@ -108,7 +107,7 @@ public class TelaPrincipalGestor extends JFrame {
 		setLocationRelativeTo(null);
 	}
 
-	public void paraGestor(Usuario usuario) {
+	public void trocarPara(Usuario usuario) {
 		txtUsuario.setText(usuario.getNomeCompleto());
 	}
 	
