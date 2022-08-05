@@ -1,5 +1,6 @@
 package br.senai.logistica.frontend.ui.table;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -10,11 +11,11 @@ public class TransportesTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 4219244341278160651L;
 	
-	private List<MeioTransporte> transportes;
+	private List<MeioTransporte> transportes = new ArrayList<>();
 	private final Integer QTDE_COLUNAS = 3;
 	
 	public TransportesTableModel(List<MeioTransporte> transportes) {
-		this.transportes = transportes;
+		this.transportes.addAll(transportes);
 	}
 	
 	@Override
