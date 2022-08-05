@@ -26,7 +26,7 @@ public class MotoristaService {
 	private Rota rota;
 	
 	public List<Motorista> listarTodosMotoristas() throws JsonMappingException, JsonProcessingException {
-		var motoristasArray = rota.listarTodosMotoristas();
+		var motoristasArray = rota.listarTodos(Entity.MOTORISTA);
 		Motorista[] readValue = null;
 		readValue = mapper.readValue(motoristasArray, Motorista[].class);
 		return Arrays.asList(readValue);
@@ -37,7 +37,7 @@ public class MotoristaService {
 	}
 
 	public Motorista cadastrar(Motorista novoMotorista) throws JsonMappingException, JsonProcessingException {
-		return rota.cadastrar(novoMotorista);
+		return (Motorista) rota.cadastrar(novoMotorista);
 	}
 	
 	public void editar(Motorista novoMotorista) throws JsonMappingException, JsonProcessingException {
