@@ -2,6 +2,10 @@ package br.senai.logistica.frontend.ui.telas;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -15,14 +19,19 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.MaskFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.senai.logistica.frontend.entity.MeioTransporte;
 import br.senai.logistica.frontend.entity.Motorista;
+import br.senai.logistica.frontend.entity.Tipo;
+import br.senai.logistica.frontend.service.MeioTransporteService;
 import br.senai.logistica.frontend.service.MotoristaService;
 
 @Component
@@ -39,31 +48,44 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 	private TelaLogin telaLogin;
 	
 	@Autowired
+	private MeioTransporteService service;
+	
+	@Autowired
 	private MotoristaService motoristaService;
 	
 	private JPanel contentPane;
 	private JComboBox<Motorista> boxMotorista;
-	private JComboBox<String> boxTipo;
+	private JComboBox<Tipo> boxTipo;
 	private JTextArea txtDescricao;
 	private JFormattedTextField txtRevisao;
 
+	private MeioTransporte meioTransporte;
+
+	private DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+	@Autowired
+	private ObjectMapper mapper;
+
 	public TelaModificacaoMeioDeTransporte() {
 		setTitle("Meio de Transporte (INSERÇÃO/EDIÇÃO) - SA System 1.6");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 480, 390);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
 		JButton btnConsultar = new JButton("Consultar");
+		btnConsultar.addActionListener(e -> {
+			this.setVisible(false);
+			this.telaTransporte.setVisible(true);
+		});
 		
 		JLabel lblRevisao = new JLabel("Revisão");
 		
-		txtRevisao = new JFormattedTextField();
+		txtRevisao = new JFormattedTextField(getMascara());
 		
-		boxTipo = new JComboBox<String>();
-		boxTipo.addItem("CARRO");
-		boxTipo.addItem("MOTO");
+		boxTipo = new JComboBox<Tipo>();
+		boxTipo.addItem(Tipo.CARRO);
+		boxTipo.addItem(Tipo.MOTO);
 		
 		JLabel lblTipo = new JLabel("Tipo");
 		
@@ -76,6 +98,10 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 		txtDescricao = new JTextArea();
 		
 		JButton btnSalvar = new JButton("Salvar");
+		btnSalvar.addActionListener(e -> {
+			salvarTransporte();
+		});
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -124,31 +150,99 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		configurarFechamento();
 	}
 	
+	private void salvarTransporte() {
+		try {
+			getMeioTranporte();
+			
+			if (this.meioTransporte.getId() == null) {
+				MeioTransporte cadastrado = service.cadastrar(this.meioTransporte);
+				this.meioTransporte.setId(cadastrado.getId());
+				this.meioTransporte.setMotorista(cadastrado.getMotorista());
+				JOptionPane.showMessageDialog(contentPane, "Motorista cadastrado com sucesso!");				
+			} else {
+				service.editar(this.meioTransporte);
+				JOptionPane.showMessageDialog(contentPane, "Motorista editado com sucesso!");				
+			}
+		} catch (DateTimeParseException dtpe) {
+			JOptionPane.showMessageDialog(contentPane, "Data inválida, tente novamente");
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(contentPane, e.getMessage());
+		}
+	}
+
+	private void getMeioTranporte() {
+		this.meioTransporte.setDescricao(txtDescricao.getText());
+		this.meioTransporte.setTipoVeiculo((Tipo) boxTipo.getSelectedItem());
+		formatarData();
+		getMotorista();
+	}
+
+	private void getMotorista() {
+		var selecionado = (Motorista) boxMotorista.getSelectedItem();
+		try {
+			System.out.println(mapper.writeValueAsString(selecionado));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		this.meioTransporte.setMotorista(selecionado);
+	}
+
+	private void formatarData() {
+		this.meioTransporte.setDataRevisao(LocalDate.parse(txtRevisao.getText(), formatoData));
+	}
+
 	@Override
 	public void setVisible(boolean b) {
 		super.setVisible(b);
-		try {
-			var motoristas = motoristaService.listarTodosMotoristas();
-			motoristas.forEach(m -> boxMotorista.addItem(m));
-		} catch (JsonProcessingException e) {
-			JOptionPane.showMessageDialog(contentPane, e.getMessage());
+		if (b) {
+			try {
+				var motoristas = motoristaService.listarTodosMotoristas();
+				motoristas.forEach(m -> boxMotorista.addItem(m));
+			} catch (JsonProcessingException e) {
+				JOptionPane.showMessageDialog(contentPane, e.getMessage());
+			}			
 		}
 	}
 
 	public void cadastrar() {
 		this.limparCampos();
+		this.meioTransporte = new MeioTransporte();
 		this.setVisible(true);
 	}
 
-	public void botarEmEdicao(Motorista motorista) {
+	public void botarEmEdicao(MeioTransporte meioTransporteSelecionado) {
 		this.setVisible(true);
+		this.meioTransporte = meioTransporteSelecionado;
+		try {
+			System.out.println(mapper.writeValueAsString(this.meioTransporte));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		this.txtDescricao.setText(meioTransporteSelecionado.getDescricao());
+		this.txtRevisao.setText(meioTransporteSelecionado.getDataRevisao().format(formatoData));
+		this.boxTipo.setSelectedItem(meioTransporteSelecionado.getTipoVeiculo());
+		this.boxMotorista.setSelectedItem(meioTransporteSelecionado.getMotorista());
+	}
+	
+	private MaskFormatter getMascara() {
+		try {
+			return new MaskFormatter("##/##/####");
+		} catch (ParseException e) {
+			return null;
+		}
 	}
 	
 	private void limparCampos() {
-		//TODO: fazer limpar campos
+		boxMotorista.setSelectedIndex(-1);
+		boxTipo.setSelectedIndex(-1);
+		txtDescricao.setText("");
+		txtRevisao.setText("");
 	}
 	
 	private void configurarFechamento() {
