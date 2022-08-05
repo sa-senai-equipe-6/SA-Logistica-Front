@@ -56,5 +56,9 @@ public class MotoristaService {
 	public Motorista buscarPor(Integer id) throws JsonMappingException, JsonProcessingException {
 		return rota.buscarMotoristaPor(id);
 	}
+
+	public Motorista buscarPorUsuario(Integer id) throws JsonMappingException, JsonProcessingException {
+		return rota.buscarMotoristaPorUsuario(id);
+	}
 	
 }

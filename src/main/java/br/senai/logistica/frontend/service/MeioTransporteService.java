@@ -40,8 +40,8 @@ public class MeioTransporteService {
 		rota.montarRequisicao(transporte, HttpMethod.PUT);
 	}
 	
-	public List<MeioTransporte> listarPorMotorista(String nomeMotorista) throws JsonMappingException, JsonProcessingException {
-		var motoristasArray = rota.listar(Entity.MEIO_TRANSPORTE, nomeMotorista);
+	public List<MeioTransporte> listarPor(String descricao) throws JsonMappingException, JsonProcessingException {
+		var motoristasArray = rota.listar(Entity.MEIO_TRANSPORTE, descricao);
 		MeioTransporte[] readValue = null;
 		readValue = mapper.readValue(motoristasArray, MeioTransporte[].class);
 		return Arrays.asList(readValue);

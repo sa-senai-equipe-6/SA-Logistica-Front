@@ -39,7 +39,7 @@ public class TransportesTableModel extends AbstractTableModel {
 		}
 	}
 	
-	public void removePor(int id) {
+	public void removerPor(int id) {
 		this.transportes.remove(id);
 	}
 	

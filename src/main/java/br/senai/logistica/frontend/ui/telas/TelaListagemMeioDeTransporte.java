@@ -25,7 +25,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.senai.logistica.frontend.entity.MeioTransporte;
 import br.senai.logistica.frontend.service.MeioTransporteService;
-import br.senai.logistica.frontend.ui.table.MotoristaTableModel;
 import br.senai.logistica.frontend.ui.table.TransportesTableModel;
 
 @Component
@@ -133,9 +132,9 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 
 			if (opcaoSelecionada == JOptionPane.YES_OPTION) {
 				this.service.excluir(transporteSelecionado);
-				((MotoristaTableModel) tabela.getModel()).removerPor(linhaSelecionada);
+				((TransportesTableModel) tabela.getModel()).removerPor(linhaSelecionada);
 				tabela.updateUI();
-				JOptionPane.showMessageDialog(contentPane, "Motorista removido com sucesso");
+				JOptionPane.showMessageDialog(contentPane, "Meio de transporte removido com sucesso");
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(contentPane, e.getMessage());
@@ -151,19 +150,20 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 
 	private void atualizar(JTable tabela) {
 		try {
-			String filtro = txtFiltro.getText();
-			if (filtro == null || filtro.isBlank()) {
+			String descricao = txtFiltro.getText();
+			if (descricao == null || descricao.isBlank()) {
 				throw new IllegalArgumentException("O filtro é obrigatório");
 			}
-			var transportes = service.listarPorMotorista(filtro);
+			var transportes = service.listarPor(descricao);
 			if (transportes == null || transportes.isEmpty()) {
-				throw new NoSuchElementException("Nenhum transporte encontrado com esse motorista");
+				throw new NoSuchElementException("Nenhum transporte encontrado com essa descrição");
 			}
 			var transportesTableModel = new TransportesTableModel(transportes);
 			tabela.setModel(transportesTableModel);
 			var cm = tabela.getColumnModel();
 			cm.getColumn(0).setPreferredWidth(20);
-			cm.getColumn(1).setPreferredWidth(240);
+			cm.getColumn(1).setPreferredWidth(40);
+			cm.getColumn(2).setPreferredWidth(160);
 			tabela.updateUI();
 		} catch (JsonProcessingException | IllegalArgumentException | NoSuchElementException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage());

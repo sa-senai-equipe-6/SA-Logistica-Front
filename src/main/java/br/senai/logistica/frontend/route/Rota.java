@@ -94,7 +94,9 @@ public class Rota {
 		}
 		
 		try {
-			System.out.println("Enviando requisição com body: " + entity.getBody().toString());
+			if (entity != HttpEntity.EMPTY)	
+				System.out.println("Enviando requisição com body: " + entity.getBody().toString());
+			
 			restTemplate.exchange(url, method, entity, String.class);
 		} catch (Exception e) {
 			tratarException(e);
@@ -143,6 +145,17 @@ public class Rota {
 		try {
 			ResponseEntity<String> exchange = restTemplate.exchange(montarUrlPara(entity), HttpMethod.GET, HttpEntity.EMPTY, String.class);
 			return exchange.getBody();
+		} catch (Exception e) {
+			tratarException(e);
+		}
+		return null;
+	}
+
+	public Motorista buscarMotoristaPorUsuario(Integer id) throws JsonMappingException, JsonProcessingException {
+		var url = montarUrlPara(Entity.MOTORISTA) + "/usuario/id/" + id;
+		try {
+			ResponseEntity<Motorista> resposta = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, Motorista.class);
+			return resposta.getBody();
 		} catch (Exception e) {
 			tratarException(e);
 		}

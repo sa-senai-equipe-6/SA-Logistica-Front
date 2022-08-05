@@ -33,21 +33,28 @@ public class TelaPrincipalMotorista extends JFrame {
 	@Lazy
 	private TelaLogin telaLogin;
 	
+	@Autowired
+	private TelaListagemMotorista telaListagemMotorista;
+	
 	private JPanel contentPane;
 	private JTextField txtUsuarioLogado;
 	private JTextField txtUsuario;
-
+	
 	public TelaPrincipalMotorista() {
 		setTitle("Principal (Acesso Motorista) - SA System 1.6");
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
+		setResizable(false);
 		
 		JButton btnMotorista = new JButton("Motorista");
+		btnMotorista.addActionListener(e -> {
+			this.setVisible(false);
+			telaListagemMotorista.setVisible(true);
+		});
 		
 		JButton btnSair = new JButton("Sair");
-		
 		btnSair.addActionListener(e -> {
 			this.setVisible(false);
 			telaLogin.setVisible(true);
@@ -91,13 +98,15 @@ public class TelaPrincipalMotorista extends JFrame {
 					.addContainerGap())
 		);
 		contentPane.setLayout(gl_contentPane);
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		configurarFechamento();
 	}
 
 	public void trocarPara(Integer id) {
 		try {
-			var recebido = service.buscarPor(id);
+			System.out.println("Buscando motorista pelo id: " + id);
+			var recebido = service.buscarPorUsuario(id);
 			this.txtUsuario.setText(recebido.getUsuario().getNomeCompleto());
 		} catch (JsonProcessingException e) {
 			JOptionPane.showMessageDialog(contentPane, e.getMessage());

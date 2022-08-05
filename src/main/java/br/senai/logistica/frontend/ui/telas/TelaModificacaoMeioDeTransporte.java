@@ -1,5 +1,9 @@
 package br.senai.logistica.frontend.ui.telas;
 
+import static java.lang.Short.MAX_VALUE;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.ParseException;
@@ -111,17 +115,17 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 						.addComponent(btnConsultar, Alignment.TRAILING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(txtRevisao, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+								.addComponent(txtRevisao, PREFERRED_SIZE, 95, PREFERRED_SIZE)
 								.addComponent(lblRevisao))
 							.addPreferredGap(ComponentPlacement.UNRELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblTipo, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-								.addComponent(boxTipo, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)))
-						.addComponent(lblMotorista, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-						.addComponent(boxMotorista, 0, 430, Short.MAX_VALUE)
+								.addComponent(lblTipo, PREFERRED_SIZE, 45, PREFERRED_SIZE)
+								.addComponent(boxTipo, PREFERRED_SIZE, 107, PREFERRED_SIZE)))
+						.addComponent(lblMotorista, PREFERRED_SIZE, 63, PREFERRED_SIZE)
+						.addComponent(boxMotorista, 0, 430, MAX_VALUE)
 						.addComponent(lblDescricao)
-						.addComponent(txtDescricao, GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
-						.addComponent(btnSalvar, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE))
+						.addComponent(txtDescricao, DEFAULT_SIZE, 431, MAX_VALUE)
+						.addComponent(btnSalvar, Alignment.TRAILING, PREFERRED_SIZE, 89, PREFERRED_SIZE))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -135,19 +139,19 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 						.addComponent(lblTipo))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(txtRevisao, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(boxTipo, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE))
+						.addComponent(txtRevisao, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+						.addComponent(boxTipo, PREFERRED_SIZE, 22, PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(lblMotorista)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(boxMotorista, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+					.addComponent(boxMotorista, PREFERRED_SIZE, 22, PREFERRED_SIZE)
 					.addGap(18)
 					.addComponent(lblDescricao)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txtDescricao, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
+					.addComponent(txtDescricao, PREFERRED_SIZE, 119, PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnSalvar)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addContainerGap(DEFAULT_SIZE, MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
 		setLocationRelativeTo(null);
@@ -163,10 +167,10 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 				MeioTransporte cadastrado = service.cadastrar(this.meioTransporte);
 				this.meioTransporte.setId(cadastrado.getId());
 				this.meioTransporte.setMotorista(cadastrado.getMotorista());
-				JOptionPane.showMessageDialog(contentPane, "Motorista cadastrado com sucesso!");				
+				JOptionPane.showMessageDialog(contentPane, "Meio de transporte cadastrado com sucesso!");				
 			} else {
 				service.editar(this.meioTransporte);
-				JOptionPane.showMessageDialog(contentPane, "Motorista editado com sucesso!");				
+				JOptionPane.showMessageDialog(contentPane, "Meio de transporte editado com sucesso!");				
 			}
 		} catch (DateTimeParseException dtpe) {
 			JOptionPane.showMessageDialog(contentPane, "Data inválida, tente novamente");
@@ -203,6 +207,7 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 		if (b) {
 			try {
 				var motoristas = motoristaService.listarTodosMotoristas();
+				boxMotorista.removeAllItems();
 				motoristas.forEach(m -> boxMotorista.addItem(m));
 			} catch (JsonProcessingException e) {
 				JOptionPane.showMessageDialog(contentPane, e.getMessage());
