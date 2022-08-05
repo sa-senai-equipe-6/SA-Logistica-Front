@@ -4,7 +4,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 
-//TODO: procurar lista imutavel de motorista
 @SpringBootApplication
 public class InitApp {
 
