@@ -39,7 +39,6 @@ public class TelaPrincipalMotorista extends JFrame {
 
 	public TelaPrincipalMotorista() {
 		setTitle("Principal (Acesso Motorista) - SA System 1.6");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -48,6 +47,11 @@ public class TelaPrincipalMotorista extends JFrame {
 		JButton btnMotorista = new JButton("Motorista");
 		
 		JButton btnSair = new JButton("Sair");
+		
+		btnSair.addActionListener(e -> {
+			this.setVisible(false);
+			telaLogin.setVisible(true);
+		});
 		
 		txtUsuarioLogado = new JTextField();
 		txtUsuarioLogado.setText("Usuario Logado");
@@ -87,6 +91,7 @@ public class TelaPrincipalMotorista extends JFrame {
 					.addContainerGap())
 		);
 		contentPane.setLayout(gl_contentPane);
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		configurarFechamento();
 	}
 

@@ -2,6 +2,7 @@ package br.senai.logistica.frontend.ui.telas;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.NoSuchElementException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -19,6 +20,8 @@ import javax.swing.border.EmptyBorder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.senai.logistica.frontend.entity.MeioTransporte;
 import br.senai.logistica.frontend.service.MeioTransporteService;
@@ -40,20 +43,19 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
+	private JTextField txtFiltro;
 
 	public TelaListagemMeioDeTransporte() {
 		JTable tabela = new JTable();
 		setResizable(false);
 		setTitle("Meio de Transporte (LISTAGEM) - SA System 1.6");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 350);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
-		textField = new JTextField();
-		textField.setColumns(10);
+		txtFiltro = new JTextField();
+		txtFiltro.setColumns(10);
 
 		JLabel lblFiltro = new JLabel("Filtro");
 		JScrollPane scrollPane = new JScrollPane();
@@ -76,7 +78,7 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 						.createParallelGroup(Alignment.LEADING).addComponent(btnAdicionar, Alignment.TRAILING)
 						.addGroup(Alignment.TRAILING,
 								gl_contentPane.createSequentialGroup().addComponent(lblFiltro).addGap(372))
-						.addComponent(textField, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+						.addComponent(txtFiltro, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
 						.addComponent(btnListar, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 87,
 								GroupLayout.PREFERRED_SIZE)
 						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
@@ -90,7 +92,7 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup().addContainerGap().addComponent(btnAdicionar)
 								.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblFiltro)
 								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+								.addComponent(txtFiltro, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 										GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnListar)
 								.addPreferredGap(ComponentPlacement.RELATED)
@@ -103,6 +105,7 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 		scrollPane.setViewportView(tabela);
 		contentPane.setLayout(gl_contentPane);
 		setLocationRelativeTo(null);
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		configurarFechamento();
 	}
 
@@ -140,11 +143,31 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 	}
 	
 	private void editarRegistroNa(JTable tabela) {
-		//TODO: fazer edição
+		int linhaSelecionada = tabela.getSelectedRow();
+		var motoristaSelecionado = getTransporteSelecionadoNa(tabela, linhaSelecionada);
+		this.setVisible(false);
+		telaModTransporte.botarEmEdicao(motoristaSelecionado);
 	}
 
 	private void atualizar(JTable tabela) {
-		//TODO: fazer atualização da tabela
+		try {
+			String filtro = txtFiltro.getText();
+			if (filtro == null || filtro.isBlank()) {
+				throw new IllegalArgumentException("O filtro é obrigatório");
+			}
+			var transportes = service.listarPorMotorista(filtro);
+			if (transportes == null || transportes.isEmpty()) {
+				throw new NoSuchElementException("Nenhum transporte encontrado com esse motorista");
+			}
+			var transportesTableModel = new TransportesTableModel(transportes);
+			tabela.setModel(transportesTableModel);
+			var cm = tabela.getColumnModel();
+			cm.getColumn(0).setPreferredWidth(20);
+			cm.getColumn(1).setPreferredWidth(240);
+			tabela.updateUI();
+		} catch (JsonProcessingException | IllegalArgumentException | NoSuchElementException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage());
+		}
 	}
 
 	private MeioTransporte getTransporteSelecionadoNa(JTable tabela, int linhaSelecionada) {

@@ -1,7 +1,6 @@
 package br.senai.logistica.frontend.ui.telas;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
@@ -19,6 +18,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 
 import br.senai.logistica.frontend.entity.Usuario;
 import br.senai.logistica.frontend.service.UsuarioService;
@@ -37,6 +37,8 @@ public class TelaLogin extends JFrame {
 	@Autowired
 	private TelaPrincipalMotorista telaMotorista;
 	
+	private ActionListener loginListener = e -> tentarLogin();
+	
 	private JPanel contentPane;
 	private JTextField txtLogin;
 	private JPasswordField fldSenha;
@@ -50,26 +52,19 @@ public class TelaLogin extends JFrame {
 		setContentPane(contentPane);
 		
 		JButton btnLogin = new JButton("Logar");
-		btnLogin.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				tentarLogin();
-			}
-		});
+		btnLogin.addActionListener(loginListener);
 		
 		JLabel lblLogin = new JLabel("Login");
 		
 		txtLogin = new JTextField();
 		txtLogin.setColumns(10);
-		txtLogin.addActionListener(e -> {
-			tentarLogin();
-		});
+		txtLogin.addActionListener(loginListener);
 		
 		JLabel lblSenha = new JLabel("Senha");
 		
 		fldSenha = new JPasswordField();
-		fldSenha.addActionListener(e -> {
-			tentarLogin();
-		});
+		fldSenha.addActionListener(loginListener);
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -131,6 +126,9 @@ public class TelaLogin extends JFrame {
 				limparCampos();
 				trocarTelaPara(usuarioLogado);
 			}
+		} catch (ResourceAccessException rae) {
+			rae.printStackTrace();
+			JOptionPane.showMessageDialog(TelaLogin.this, "Um erro inesperado ocorreu, tente novamente");
 		} catch (Exception e2) {
 			e2.printStackTrace();
 			JOptionPane.showMessageDialog(TelaLogin.this, e2.getMessage());

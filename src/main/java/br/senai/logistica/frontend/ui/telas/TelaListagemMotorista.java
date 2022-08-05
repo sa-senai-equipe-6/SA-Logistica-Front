@@ -49,7 +49,6 @@ public class TelaListagemMotorista extends JFrame {
 		JTable table = new JTable();
 		setResizable(false);
 		setTitle("Motorista (LISTAGEM) - SA System 1.6");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 350);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -122,6 +121,7 @@ public class TelaListagemMotorista extends JFrame {
 		scrollPane.setViewportView(table);
 		contentPane.setLayout(gl_contentPane);
 		setLocationRelativeTo(null);
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		configurarFechamento();
 	}
 

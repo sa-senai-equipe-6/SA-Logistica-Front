@@ -42,7 +42,6 @@ public class TelaPrincipalGestor extends JFrame {
 
 	public TelaPrincipalGestor() {
 		setTitle("Principal (Acesso Gestor) - SA System 1.6");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -56,10 +55,9 @@ public class TelaPrincipalGestor extends JFrame {
 		});
 		
 		JButton btnSair = new JButton("Sair");
-		btnSair.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
+		btnSair.addActionListener(e -> {
+			this.setVisible(false);
+			telaLogin.setVisible(true);
 		});
 		
 		lblUsuario = new JTextField();
