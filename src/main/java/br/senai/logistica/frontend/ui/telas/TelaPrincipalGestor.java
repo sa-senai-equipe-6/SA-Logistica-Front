@@ -3,6 +3,8 @@ package br.senai.logistica.frontend.ui.telas;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -14,6 +16,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import br.senai.logistica.frontend.entity.Usuario;
@@ -25,6 +28,10 @@ public class TelaPrincipalGestor extends JFrame {
 
 	@Autowired
 	private TelaListagemMotorista telaMotoristas;
+	
+	@Autowired
+	@Lazy
+	private TelaLogin telaLogin;
 	
 	@Autowired
 	private TelaListagemMeioDeTransporte telaTransportes;
@@ -105,6 +112,8 @@ public class TelaPrincipalGestor extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 		setResizable(false);
 		setLocationRelativeTo(null);
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
+		configurarFechamento();
 	}
 
 	public void trocarPara(Usuario usuario) {
@@ -119,6 +128,16 @@ public class TelaPrincipalGestor extends JFrame {
 	protected void paraMotoristas() {
 		this.setVisible(false);
 		telaMotoristas.setVisible(true);
+	}
+	
+	private void configurarFechamento() {
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+				telaLogin.setVisible(true);
+			}
+		});
 	}
 	
 }

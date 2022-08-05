@@ -1,5 +1,6 @@
 package br.senai.logistica.frontend.route;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +8,9 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -29,13 +32,13 @@ public class Rota {
 	
 	@Autowired
 	private ObjectMapper mapper;
-	
-    public String listar(Entity entity) {
-    	var url = montarUrlPara(entity);
-    	ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, String.class);
-    	return response.getBody();
-    }
     
+	private HttpEntity<String> montarEntityPara(Motorista novoMotorista) throws JsonProcessingException {
+		var headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		return new HttpEntity<String>(mapper.writeValueAsString(novoMotorista), headers);
+	}
+	
     public String listar(Entity entity, String filtro) {
 		var url = montarUrlPara(entity) + "/filtro/" + filtro;
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, String.class);
@@ -65,11 +68,38 @@ public class Rota {
 		return null;
 	}
 
+	public Motorista cadastrar(Motorista novoMotorista) throws JsonProcessingException {
+		var entity = montarEntityPara(novoMotorista);
+		var url = montarUrlPara(Entity.MOTORISTA);
+				
+		try {
+			return restTemplate.exchange(url, HttpMethod.POST, entity, Motorista.class).getBody();
+		} catch (Exception e) {
+			tratarException(e);
+		}
+		return null;
+	}
+	
 	public void montarRequisicao(Motorista novoMotorista, HttpMethod method) throws JsonMappingException, JsonProcessingException {
+		
+		var entity = HttpEntity.EMPTY;
+		var url = montarUrlPara(Entity.MOTORISTA);
 		var id = novoMotorista.getId();
-		var url = montarUrlPara(Entity.MOTORISTA) + "/id/" + id;
+
+		switch (method) {
+		case GET:
+		case DELETE:
+			url += "/id/" + id;
+			break;
+		case PUT:
+			entity = montarEntityPara(novoMotorista);
+			break;
+		default:
+			break;
+		}
+		
 		try {			
-			restTemplate.exchange(url, method, HttpEntity.EMPTY, String.class);
+			restTemplate.exchange(url, method, entity, String.class);
 		} catch (Exception e) {
 			tratarException(e);
 		}
@@ -96,6 +126,16 @@ public class Rota {
 		try {
 			ResponseEntity<Motorista> resposta = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, Motorista.class);
 			return resposta.getBody();
+		} catch (Exception e) {
+			tratarException(e);
+		}
+		return null;
+	}
+
+	public String listarTodosMotoristas() throws JsonMappingException, JsonProcessingException {
+		try {
+			ResponseEntity<String> exchange = restTemplate.exchange(montarUrlPara(Entity.MOTORISTA), HttpMethod.GET, HttpEntity.EMPTY, String.class);
+			return exchange.getBody();
 		} catch (Exception e) {
 			tratarException(e);
 		}

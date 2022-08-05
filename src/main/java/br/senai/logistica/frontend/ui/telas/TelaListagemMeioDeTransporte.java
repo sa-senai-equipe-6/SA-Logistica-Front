@@ -1,5 +1,8 @@
 package br.senai.logistica.frontend.ui.telas;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -14,6 +17,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import br.senai.logistica.frontend.entity.MeioTransporte;
@@ -27,6 +31,10 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 	@Autowired
 	private MeioTransporteService service;
 
+	@Autowired
+	@Lazy
+	private TelaLogin telaLogin;
+	
 	@Autowired
 	private TelaModificacaoMeioDeTransporte telaModTransporte;
 
@@ -95,6 +103,17 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 		scrollPane.setViewportView(tabela);
 		contentPane.setLayout(gl_contentPane);
 		setLocationRelativeTo(null);
+		configurarFechamento();
+	}
+
+	private void configurarFechamento() {
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+				telaLogin.setVisible(true);
+			}
+		});
 	}
 
 	private void adicionarTransporte() {

@@ -2,6 +2,8 @@ package br.senai.logistica.frontend.ui.telas;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -17,6 +19,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,6 +34,10 @@ public class TelaListagemMotorista extends JFrame {
 	@Autowired
 	private MotoristaService service;
 
+	@Autowired
+	@Lazy
+	private TelaLogin telaLogin;
+	
 	@Autowired
 	private TelaModificacaoMotorista telaModMotorista;
 
@@ -115,6 +122,7 @@ public class TelaListagemMotorista extends JFrame {
 		scrollPane.setViewportView(table);
 		contentPane.setLayout(gl_contentPane);
 		setLocationRelativeTo(null);
+		configurarFechamento();
 	}
 
 	private void removerRegistroDa(JTable tabela) {
@@ -137,7 +145,10 @@ public class TelaListagemMotorista extends JFrame {
 	}
 
 	private void editarRegistroDa(JTable tabela) {
-		//TODO: fazer edicao de registro
+		int linhaSelecionada = tabela.getSelectedRow();
+		var motoristaSelecionado = getMotoristaSelecionadoNa(tabela, linhaSelecionada);
+		this.setVisible(false);
+		telaModMotorista.botarEmEdicao(motoristaSelecionado);
 	}
 
 	private void atualizarTabela(JTable tabela) {
@@ -166,5 +177,15 @@ public class TelaListagemMotorista extends JFrame {
 		var model = (MotoristaTableModel) tabela.getModel();
 		var itemSelecionado = model.getPor(linhaSelecionada);
 		return itemSelecionado;
+	}
+	
+	private void configurarFechamento() {
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+				telaLogin.setVisible(true);
+			}
+		});
 	}
 }

@@ -26,18 +26,18 @@ public class MotoristaService {
 	private Rota rota;
 	
 	public List<Motorista> listarTodosMotoristas() throws JsonMappingException, JsonProcessingException {
-		var motoristasArray = rota.listar(Entity.MOTORISTA);
+		var motoristasArray = rota.listarTodosMotoristas();
 		Motorista[] readValue = null;
 		readValue = mapper.readValue(motoristasArray, Motorista[].class);
 		return Arrays.asList(readValue);
 	}
-
+	
 	public void excluir(Motorista motoristaSelecionado) throws JsonMappingException, JsonProcessingException {
 		rota.montarRequisicao(motoristaSelecionado, HttpMethod.DELETE);
 	}
 
-	public void cadastrar(Motorista novoMotorista) throws JsonMappingException, JsonProcessingException {
-		rota.montarRequisicao(novoMotorista, HttpMethod.POST);
+	public Motorista cadastrar(Motorista novoMotorista) throws JsonMappingException, JsonProcessingException {
+		return rota.cadastrar(novoMotorista);
 	}
 	
 	public void editar(Motorista novoMotorista) throws JsonMappingException, JsonProcessingException {

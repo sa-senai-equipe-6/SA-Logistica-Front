@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Motorista {
+	
 	Integer id;
 	String cnh;
 	LocalDate dataRenovacao;

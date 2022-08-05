@@ -1,5 +1,8 @@
 package br.senai.logistica.frontend.ui.telas;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -30,6 +33,10 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 	@Autowired
 	@Lazy
 	private TelaListagemMeioDeTransporte telaTransporte;
+	
+	@Autowired
+	@Lazy
+	private TelaLogin telaLogin;
 	
 	@Autowired
 	private MotoristaService motoristaService;
@@ -117,6 +124,7 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
+		configurarFechamento();
 	}
 	
 	@Override
@@ -141,5 +149,15 @@ public class TelaModificacaoMeioDeTransporte extends JFrame {
 	
 	private void limparCampos() {
 		//TODO: fazer limpar campos
+	}
+	
+	private void configurarFechamento() {
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+				telaLogin.setVisible(true);
+			}
+		});
 	}
 }

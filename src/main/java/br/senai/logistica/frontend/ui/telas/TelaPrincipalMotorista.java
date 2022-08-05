@@ -1,5 +1,8 @@
 package br.senai.logistica.frontend.ui.telas;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -11,6 +14,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,6 +28,10 @@ public class TelaPrincipalMotorista extends JFrame {
 
 	@Autowired
 	private MotoristaService service;
+	
+	@Autowired
+	@Lazy
+	private TelaLogin telaLogin;
 	
 	private JPanel contentPane;
 	private JTextField txtUsuarioLogado;
@@ -79,6 +87,7 @@ public class TelaPrincipalMotorista extends JFrame {
 					.addContainerGap())
 		);
 		contentPane.setLayout(gl_contentPane);
+		configurarFechamento();
 	}
 
 	public void trocarPara(Integer id) {
@@ -88,6 +97,16 @@ public class TelaPrincipalMotorista extends JFrame {
 		} catch (JsonProcessingException e) {
 			JOptionPane.showMessageDialog(contentPane, e.getMessage());
 		}
+	}
+	
+	private void configurarFechamento() {
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+				telaLogin.setVisible(true);
+			}
+		});
 	}
 
 }

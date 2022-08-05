@@ -128,13 +128,20 @@ public class TelaLogin extends JFrame {
 		try {
 			if (validarCampos()) {
 				var usuarioLogado = usuarioService.loginCom(txtLogin.getText(), new String(fldSenha.getPassword()));
+				limparCampos();
 				trocarTelaPara(usuarioLogado);
 			}
 		} catch (Exception e2) {
+			e2.printStackTrace();
 			JOptionPane.showMessageDialog(TelaLogin.this, e2.getMessage());
 		}
 	}
 	
+	private void limparCampos() {
+		this.txtLogin.setText("");
+		this.fldSenha.setText("");
+	}
+
 	private void resetarCampos() {
 		txtLogin.setBorder(null);
 		fldSenha.setBorder(null);
