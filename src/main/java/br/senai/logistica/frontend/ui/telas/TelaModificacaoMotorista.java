@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -23,6 +21,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.MaskFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -32,8 +31,6 @@ import br.senai.logistica.frontend.entity.Motorista;
 import br.senai.logistica.frontend.entity.Perfil;
 import br.senai.logistica.frontend.entity.Usuario;
 import br.senai.logistica.frontend.service.MotoristaService;
-
-//TODO: formatar corretamente campo de data
 
 @Component
 public class TelaModificacaoMotorista extends JFrame {
@@ -70,7 +67,6 @@ public class TelaModificacaoMotorista extends JFrame {
 	public TelaModificacaoMotorista() {
 		setResizable(false);
 		setTitle("Motorista (INSERÇÃO/EDIÇÃO) - SA System 1.6");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 399, 288);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -90,8 +86,8 @@ public class TelaModificacaoMotorista extends JFrame {
 
 		JLabel lblNome = new JLabel("Nome Completo");
 
-		DateFormat formatoDataTxt = new SimpleDateFormat("dd/MM/yyyy");
-		txtRenovacao = new JFormattedTextField(formatoDataTxt);
+		MaskFormatter mascara = getMascara();
+		txtRenovacao = new JFormattedTextField(mascara);
 
 		lblRenovacao = new JLabel("Renovação");
 
@@ -204,7 +200,16 @@ public class TelaModificacaoMotorista extends JFrame {
 				.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(btnSalvar).addGap(119)));
 		contentPane.setLayout(gl_contentPane);
 		setLocationRelativeTo(null);
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		configurarFechamento();
+	}
+
+	private MaskFormatter getMascara() {
+		try {
+			return new MaskFormatter("##/##/####");
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	protected void salvarMotorista() {
@@ -222,7 +227,7 @@ public class TelaModificacaoMotorista extends JFrame {
 			}
 			
 		} catch (DateTimeParseException dtpe) {
-			JOptionPane.showMessageDialog(contentPane, "Data inválida, tente novamente\nFormato da data: XX/XX/XXXX");
+			JOptionPane.showMessageDialog(contentPane, "Data inválida, tente novamente");
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(contentPane, e.getMessage());
@@ -238,10 +243,14 @@ public class TelaModificacaoMotorista extends JFrame {
 	private void getMotorista() {
 		this.motorista.setCnh(txtCnh.getText());
 		this.motorista.setCategoria((Character) boxCategoria.getSelectedItem());
-		this.motorista.setDataRenovacao(LocalDate.parse(txtRenovacao.getText(), formatoData));
+		formatarData();
 		getUsuario();
 	}
 	
+	private void formatarData() {
+		this.motorista.setDataRenovacao(LocalDate.parse(txtRenovacao.getText(), formatoData));
+	}
+
 	private void getUsuario() {
 		if (this.motorista.getUsuario() == null) {			
 			this.motorista.setUsuario(
