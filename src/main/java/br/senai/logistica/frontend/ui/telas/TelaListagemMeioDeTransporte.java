@@ -2,6 +2,7 @@ package br.senai.logistica.frontend.ui.telas;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 import javax.swing.GroupLayout;
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.senai.logistica.frontend.entity.MeioTransporte;
 import br.senai.logistica.frontend.service.MeioTransporteService;
+import br.senai.logistica.frontend.ui.table.MotoristaTableModel;
 import br.senai.logistica.frontend.ui.table.TransportesTableModel;
 
 @Component
@@ -43,9 +45,20 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtFiltro;
+	
+	@Override
+	public void setVisible(boolean b) {
+		super.setVisible(b);
+		try {
+			txtFiltro.setText("");
+			table.setModel(new MotoristaTableModel(new ArrayList<>()));		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
+	private JTable table = new JTable();
 	public TelaListagemMeioDeTransporte() {
-		JTable tabela = new JTable();
 		setResizable(false);
 		setTitle("Meio de Transporte (LISTAGEM) - SA System 1.6");
 		setBounds(100, 100, 450, 350);
@@ -63,13 +76,13 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 		btnAdicionar.addActionListener(e -> adicionarTransporte());
 
 		JButton btnListar = new JButton("Listar");
-		btnListar.addActionListener(e -> atualizar(tabela));
+		btnListar.addActionListener(e -> atualizar(table));
 
 		JButton btnRemover = new JButton("Remover");
-		btnRemover.addActionListener(e -> removerRegistroDa(tabela));
+		btnRemover.addActionListener(e -> removerRegistroDa(table));
 
 		JButton btnEditar = new JButton("Editar");
-		btnEditar.addActionListener(e -> editarRegistroNa(tabela));
+		btnEditar.addActionListener(e -> editarRegistroNa(table));
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -101,7 +114,7 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 										.addComponent(btnRemover).addComponent(btnEditar))
 								.addContainerGap(14, Short.MAX_VALUE)));
 
-		scrollPane.setViewportView(tabela);
+		scrollPane.setViewportView(table);
 		contentPane.setLayout(gl_contentPane);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
