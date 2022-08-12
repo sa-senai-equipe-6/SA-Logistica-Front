@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -68,11 +69,9 @@ public class TelaListagemMotorista extends JFrame {
 		setContentPane(contentPane);
 
 		JButton btnAdicionar = new JButton("Adicionar");
-		btnAdicionar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-				telaModMotorista.cadastrar();
-			}
+		btnAdicionar.addActionListener(e -> {
+			setVisible(false);
+			telaModMotorista.cadastrar();
 		});
 
 		txtFiltro = new JTextField();
@@ -81,27 +80,16 @@ public class TelaListagemMotorista extends JFrame {
 		JLabel lblFiltro = new JLabel("Filtro");
 
 		JButton btnListar = new JButton("Listar");
-		btnListar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				TelaListagemMotorista.this.atualizarTabela(table);
-			}
-		});
+		btnListar.addActionListener(e -> TelaListagemMotorista.this.atualizarTabela(table));
 
 		JScrollPane scrollPane = new JScrollPane();
 
 		JButton btnRemover = new JButton("Remover");
-		btnRemover.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				removerRegistroDa(table);
-			}
-		});
+		btnRemover.addActionListener(e -> removerRegistroDa(table));
 
 		JButton btnEditar = new JButton("Editar");
-		btnEditar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				editarRegistroDa(table);
-			}
-		});
+		btnEditar.addActionListener(e -> editarRegistroDa(table));
+
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup().addContainerGap().addGroup(gl_contentPane
@@ -151,6 +139,8 @@ public class TelaListagemMotorista extends JFrame {
 				tabela.updateUI();
 				JOptionPane.showMessageDialog(contentPane, "Motorista removido com sucesso");
 			}
+		} catch (IndexOutOfBoundsException ioobe) {
+			JOptionPane.showMessageDialog(contentPane, "Não existem motoristas para serem selecionados");
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(contentPane, e.getMessage());
@@ -158,10 +148,16 @@ public class TelaListagemMotorista extends JFrame {
 	}
 
 	private void editarRegistroDa(JTable tabela) {
-		int linhaSelecionada = tabela.getSelectedRow();
-		var motoristaSelecionado = getMotoristaSelecionadoNa(tabela, linhaSelecionada);
-		this.setVisible(false);
-		telaModMotorista.botarEmEdicao(motoristaSelecionado);
+		try {
+			int linhaSelecionada = tabela.getSelectedRow();
+			var motoristaSelecionado = getMotoristaSelecionadoNa(tabela, linhaSelecionada);
+			this.setVisible(false);
+			telaModMotorista.botarEmEdicao(motoristaSelecionado);
+		} catch (IndexOutOfBoundsException ioobe) {
+			JOptionPane.showMessageDialog(contentPane, "Não existem motoristas para serem selecionados");
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(contentPane, e.getMessage());
+		}
 	}
 
 	private void atualizarTabela(JTable tabela) {
@@ -171,13 +167,16 @@ public class TelaListagemMotorista extends JFrame {
 				throw new IllegalArgumentException("O filtro é obrigatório");
 			}
 			var motoristas = service.listarPorFiltro(filtro);
+			if (motoristas.isEmpty()) {
+				throw new NoSuchElementException("Nenhum motorista encontrado");
+			}
 			var motoristasTableModel = new MotoristaTableModel(motoristas);
 			tabela.setModel(motoristasTableModel);
 			var cm = tabela.getColumnModel();
 			cm.getColumn(0).setPreferredWidth(20);
 			cm.getColumn(1).setPreferredWidth(240);
 			tabela.updateUI();
-		} catch (JsonProcessingException | IllegalArgumentException e) {
+		} catch (JsonProcessingException | IllegalArgumentException | NoSuchElementException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage());
 		}
 

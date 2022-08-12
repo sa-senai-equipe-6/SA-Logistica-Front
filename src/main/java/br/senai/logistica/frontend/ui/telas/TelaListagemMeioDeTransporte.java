@@ -149,16 +149,24 @@ public class TelaListagemMeioDeTransporte extends JFrame {
 				tabela.updateUI();
 				JOptionPane.showMessageDialog(contentPane, "Meio de transporte removido com sucesso");
 			}
+		} catch (IndexOutOfBoundsException ioobe) {
+			JOptionPane.showMessageDialog(contentPane, "Não existem transportes para serem selecionados");
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(contentPane, e.getMessage());
 		}
 	}
 	
 	private void editarRegistroNa(JTable tabela) {
-		int linhaSelecionada = tabela.getSelectedRow();
-		var motoristaSelecionado = getTransporteSelecionadoNa(tabela, linhaSelecionada);
-		this.setVisible(false);
-		telaModTransporte.botarEmEdicao(motoristaSelecionado);
+		try {
+			int linhaSelecionada = tabela.getSelectedRow();
+			var motoristaSelecionado = getTransporteSelecionadoNa(tabela, linhaSelecionada);
+			this.setVisible(false);
+			telaModTransporte.botarEmEdicao(motoristaSelecionado);
+		} catch (IndexOutOfBoundsException ioobe) {
+			JOptionPane.showMessageDialog(contentPane, "Não existem motoristas para serem selecionados");
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(contentPane, e.getMessage());
+		}
 	}
 
 	private void atualizar(JTable tabela) {
