@@ -100,18 +100,12 @@ public class TelaModificacaoMotorista extends JFrame {
 		lblSenha = new JLabel("Senha");
 
 		JButton btnSalvar = new JButton("Salvar");
-		btnSalvar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				salvarMotorista();
-			}
-		});
+		btnSalvar.addActionListener(e -> salvarMotorista());
 
 		JButton btnConsultar = new JButton("Consultar");
-		btnConsultar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-				TelaModificacaoMotorista.this.telaMotoristas.setVisible(true);
-			}
+		btnConsultar.addActionListener(e -> {
+			setVisible(false);
+			TelaModificacaoMotorista.this.telaMotoristas.setVisible(true);
 		});
 
 		boxCategoria = new JComboBox<Character>();
@@ -294,7 +288,9 @@ public class TelaModificacaoMotorista extends JFrame {
 		txtCnh.setText("");
 		txtLogin.setText("");
 		txtNomeCompleto.setText("");
+		txtRenovacao.setText("");
 		fldSenha.setText("");
+		boxCategoria.setSelectedIndex(-1);
 	}
 
 	private void configurarFechamento() {
